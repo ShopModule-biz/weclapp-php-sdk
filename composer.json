@@ -1,7 +1,7 @@
 {
     "name": "shopmodule-biz/weclapp-php-sdk",
     "description": "weclapp PHP SDK",
-    "license": "GNU General Public License 3",
+    "license": "GPL-3.0-or-later",
     "authors": [
         {
             "name": "Timo Paul",
