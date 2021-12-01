@@ -13,7 +13,7 @@ trait HasResourceId
 {
     protected $id;
     
-    public function setId($id)
+    public function setId($id): self
     {
         $this->id = $id;
         return $this;

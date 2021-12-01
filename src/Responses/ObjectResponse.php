@@ -26,7 +26,7 @@ abstract class ObjectResponse extends Response
         }
     }
     
-    public function notFound()
+    public function notFound(): bool
     {
         return $this->notFound;
     }
