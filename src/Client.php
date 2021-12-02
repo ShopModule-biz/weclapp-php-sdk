@@ -1,44 +1,73 @@
 <?php
 
 /**
- * @author    Timo Paul <mail@timopaul.biz>
+ * @author Timo Paul <mail@timopaul.biz>
  * @copyright (c) 2020, Timo Paul Dienstleistungen
- * @license   GNU General Public License 
- *            http://www.gnu.de/documents/gpl-2.0.de.html
+ * @license GNU General Public License http://www.gnu.de/documents/gpl-2.0.de.html
  */
 
 namespace ShopModule\WeclappApi;
 
 use ShopModule\WeclappApi\Exceptions\MissingPropertyException;
 
-use ShopModule\WeclappApi\Traits\IsSingleton;
-
+use ShopModule\WeclappApi\Requests\Request;
 use ShopModule\WeclappApi\Requests\PostRequest;
 use ShopModule\WeclappApi\Requests\PutRequest;
+use ShopModule\WeclappApi\Responses\Response;
+use ShopModule\WeclappApi\Traits\IsSingleton;
 
 class Client
 {
     use IsSingleton;
-    
+
+    /**
+     * URL of the weclapp API.
+     */
     const API_URL = 'https://<tenant>.weclapp.com/webapp/api/v1/';
-    
-    private $tenant = null;
-    
-    private $token = null;
-    
-    public function __construct($tenant = null, $token = null)
+
+    /**
+     * Tenant for authentication.
+     *
+     * @var string
+     */
+    private $tenant;
+
+    /**
+     * Authentication token.
+     *
+     * @var string
+     */
+    private $token;
+
+    /**
+     * @param string $tenant
+     * @param string $token
+     */
+    public function __construct(string $tenant, string $token)
     {
         $this->setTenant($tenant);
         $this->setToken($token);
     }
-    
-    public function setTenant($tenant)
+
+    /**
+     * Sets the tenant for authentication.
+     *
+     * @param string $tenant
+     * @return $this
+     */
+    public function setTenant(string $tenant): self
     {
         $this->tenant = $tenant;
         return $this;
     }
-    
-    private function getTenant()
+
+    /**
+     * Returns the tenant for authentication.
+     *
+     * @return string
+     * @throws MissingPropertyException
+     */
+    private function getTenant(): string
     {
         if (empty($this->tenant)) {
             throw MissingPropertyException::create(get_class($this), 'tenant');
@@ -46,14 +75,26 @@ class Client
       
         return $this->tenant;
     }
-    
-    public function setToken($token)
+
+    /**
+     * Sets the token for authentication.
+     *
+     * @param string $token
+     * @return $this
+     */
+    public function setToken(string $token): self
     {
         $this->token = $token;
         return $this;
     }
-    
-    private function getToken()
+
+    /**
+     * Returns the token used for authentication.
+     *
+     * @return string
+     * @throws MissingPropertyException
+     */
+    private function getToken(): string
     {
         if (empty($this->token)) {
             throw MissingPropertyException::create(get_class($this), 'token');
@@ -61,30 +102,42 @@ class Client
       
         return $this->token;
     }
-    
-    private function buildApiUrl($request)
+
+    /**
+     * Generates the complete URL for a request and returns it.
+     *
+     * @param Request $request
+     * @return string
+     * @throws MissingPropertyException
+     */
+    private function buildApiUrl(Request $request): string
     {
-      $apiUrl = str_replace('<tenant>', $this->getTenant(), self::API_URL);
-      return $apiUrl . $request->getPath();
+        $apiUrl = str_replace('<tenant>', $this->getTenant(), self::API_URL);
+        return $apiUrl . $request->getPath();
     }
-    
-    private function buildHttpHeader()
+
+    /**
+     * Generates the HTTP headers for a request and returns it.
+     *
+     * @return string[]
+     * @throws MissingPropertyException
+     */
+    private function buildHttpHeader(): array
     {
-      $token = $this->getToken();
-      
-      if (empty($token)) {
-        throw new Exception('Missing Authentication Token!');
-      }
-      
-      $header = [
-          'AuthenticationToken: ' . $token,
-          'Content-Type: application/json',
-      ];
-      
-      return $header;
+        return [
+            'AuthenticationToken: ' . $this->getToken(),
+            'Content-Type: application/json',
+        ];
     }
-    
-    public function sendRequest($request)
+
+    /**
+     * Sends a request and returns the parsed response.
+     *
+     * @param Request $request
+     * @return Response
+     * @throws MissingPropertyException
+     */
+    public function sendRequest(Request $request): Response
     {
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $this->buildApiUrl($request));
@@ -102,15 +155,19 @@ class Client
         
         return $this->parseResponse($request, $response);
     }
-    
-    public function parseResponse($request, $response)
+
+    /**
+     * Parses the response to a request and returns it as a new object.
+     *
+     * @param Request $request
+     * @param string $response
+     * @return Response
+     */
+    public function parseResponse(Request $request, string $response): Response
     {
         $responseClass = $request->getResponseClass();
         
         return new $responseClass($response);
     }
-    
-    
-    
     
 }
