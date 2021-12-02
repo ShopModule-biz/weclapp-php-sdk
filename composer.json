@@ -12,9 +12,15 @@
     "require": {
         "php": ">=7.2.0"
     },
+    "require-dev": {
+        "phpunit/phpunit": "9.0"
+    },
     "autoload": {
         "psr-4": {
             "ShopModule\\WeclappApi\\": "src"
         }
+    },
+    "scripts": {
+        "test": "phpunit"
     }
 }
