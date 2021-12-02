@@ -40,6 +40,26 @@ class Client
     private $token;
 
     /**
+     * @var string|null
+     */
+    private $requestUrl = null;
+
+    /**
+     * @var int|null
+     */
+    private $httpStatus = null;
+
+    /**
+     * @var string|null
+     */
+    private $curlError = null;
+
+    /**
+     * @var integer|null
+     */
+    private $curlErrno = null;
+
+    /**
      * @param string $tenant
      * @param string $token
      */
@@ -104,6 +124,105 @@ class Client
     }
 
     /**
+     * Sets the URL of the last request and returns the current object.
+     *
+     * @param string|null $url
+     * @return $this
+     */
+    private function setRequestUrl(?string $url): self
+    {
+        $this->requestUrl = $url;
+        return $this;
+    }
+
+    /**
+     * Returns the URL of the last request.
+     *
+     * @return string|null
+     */
+    public function getRequestUrl(): ?string
+    {
+        return $this->requestUrl;
+    }
+
+    /**
+     * Sets the HTTP status of the last request and returns the current object.
+     *
+     * @param int|null $httpStatus
+     * @return self
+     */
+    private function setHttpStatus(?int $httpStatus): self
+    {
+        $this->httpStatus = $httpStatus;
+        return $this;
+    }
+
+    /**
+     * Returns the HTTP status of the last request.
+     *
+     * @return int|null
+     */
+    public function getHttpStatus(): ?int
+    {
+        return $this->httpStatus;
+    }
+
+    /**
+     * Sets the CURL error of the last request and returns the current object.
+     *
+     * @param string|null $curlError
+     * @return self
+     */
+    protected function setCurlError(?string $curlError): self
+    {
+        $this->curlError = $curlError;
+        return $this;
+    }
+
+    /**
+     * Returns the CURL error of the last request.
+     *
+     * @return string|null
+     */
+    public function getCurlError(): ?string
+    {
+        return $this->curlError;
+    }
+
+    /**
+     * Sets the CURL error number of the last request and returns the current object.
+     *
+     * @param int|null $curlErrno
+     * @return self
+     */
+    protected function setCurlErrno(?int $curlErrno): self
+    {
+        $this->curlErrno = $curlErrno;
+        return $this;
+    }
+
+    /**
+     * Returns the CURL error number of the last request.
+     *
+     * @return int|null
+     */
+    public function getCurlErrno(): ?int
+    {
+        return $this->curlErrno;
+    }
+
+    /**
+     * Resets the properties of the last request.
+     */
+    protected function resetStatusProperties(): void
+    {
+        $this->setRequestUrl(null);
+        $this->setHttpStatus(null);
+        $this->setCurlErrno(null);
+        $this->setCurlError(null);
+    }
+
+    /**
      * Generates the complete URL for a request and returns it.
      *
      * @param Request $request
@@ -139,8 +258,13 @@ class Client
      */
     public function sendRequest(Request $request): Response
     {
+        $this->resetStatusProperties();
+
+        $url = $this->buildApiUrl($request);
+        $this->setRequestUrl($url);
+
         $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $this->buildApiUrl($request));
+        curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $request->getMethod());
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_HTTPHEADER, $this->buildHttpHeader());
@@ -150,7 +274,13 @@ class Client
         }
         
         $response = curl_exec($ch);
-        
+
+        $this->setHttpStatus((int) curl_getinfo($ch, CURLINFO_RESPONSE_CODE));
+
+        if ('' != curl_error($ch)) {
+            $this->setCurlError(curl_error($ch));
+            $this->setCurlErrno(curl_errno($ch));
+        }
         curl_close($ch);
         
         return $this->parseResponse($request, $response);
