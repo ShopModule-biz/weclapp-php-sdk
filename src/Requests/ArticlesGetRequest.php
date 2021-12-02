@@ -8,15 +8,12 @@
 
 namespace ShopModule\WeclappApi\Requests;
 
-use ShopModule\WeclappApi\Traits\Requests\HasSeveralResponses;
+use ShopModule\WeclappApi\Responses\ArticlesResponse;
 use ShopModule\WeclappApi\Traits\Requests\IsArticleRequest;
-
-use ShopModule\WeclappApi\Responses\ArticleResponse;
 
 class ArticlesGetRequest extends GetRequest
 {
-    use HasSeveralResponses;
     use IsArticleRequest;
 
-    protected $responseClass = ArticleResponse::class;
+    protected $responseClass = ArticlesResponse::class;
 }
