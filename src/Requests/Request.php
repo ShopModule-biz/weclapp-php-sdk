@@ -11,9 +11,12 @@ namespace ShopModule\WeclappApi\Requests;
 use ShopModule\WeclappApi\Exceptions\MissingPropertyException;
 use ShopModule\WeclappApi\Responses\Response;
 use ShopModule\WeclappApi\Traits\Requests\HasResourceId;
+use ShopModule\WeclappApi\Traits\Requests\HasUrlParameter;
 
 abstract class Request
 {
+    use HasUrlParameter;
+
     /**
      * @var string
      */
@@ -64,8 +67,15 @@ abstract class Request
             $pieces[] = 'id';
             $pieces[] = $this->getId();
         }
-        
-        return implode('/', $pieces);
+
+        $path = implode('/', $pieces);
+
+        $urlParameter = $this->getUrlParameter();
+        if (null !== $urlParameter) {
+            $path .= '?' . $urlParameter;
+        }
+
+        return $path;
     }
 
     /**
@@ -95,5 +105,5 @@ abstract class Request
         $pieces = explode('\\', $classname);
         return array_pop($pieces);
     }
-    
+
 }
