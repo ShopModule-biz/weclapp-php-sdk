@@ -39,7 +39,8 @@ class Response
      */
     public function hasError(): bool
     {
-        return property_exists($this->data, 'error');
+        return is_object($this->data)
+            && property_exists($this->data, 'error');
     }
 
     /**
