@@ -9,10 +9,12 @@
 namespace ShopModule\WeclappApi\Requests;
 
 use ShopModule\WeclappApi\Responses\ArticlesResponse;
+use ShopModule\WeclappApi\Traits\Requests\HasPages;
 use ShopModule\WeclappApi\Traits\Requests\IsArticleRequest;
 
 class ArticlesGetRequest extends GetRequest
 {
+    use HasPages;
     use IsArticleRequest;
 
     protected $responseClass = ArticlesResponse::class;
