@@ -8,11 +8,9 @@
 
 namespace ShopModule\WeclappApi\Requests;
 
-use ShopModule\WeclappApi\Traits\Requests\HasResourceId;
-
 use ShopModule\WeclappApi\Exceptions\MissingPropertyException;
-
 use ShopModule\WeclappApi\Responses\Response;
+use ShopModule\WeclappApi\Traits\Requests\HasResourceId;
 
 abstract class Request
 {
@@ -62,7 +60,7 @@ abstract class Request
             $this->resource,
         ];
         
-        if ($this->usesTrait(HasResourceId::class)) {
+        if ($this->usesTrait(HasResourceId::class) && method_exists($this, 'getId')) {
             $pieces[] = 'id';
             $pieces[] = $this->getId();
         }

@@ -8,7 +8,9 @@
 
 namespace ShopModule\WeclappApi\Traits\Requests;
 
-trait IsArticleRequest
+trait HasSeveralResponses
 {
-    protected $resource = 'article';
+
+
+
 }
