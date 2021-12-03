@@ -8,7 +8,12 @@
 
 namespace ShopModule\WeclappApi\Responses;
 
+use ShopModule\WeclappApi\Models\Article;
+
 class ArticlesResponse extends SeveralResponse
 {
-    //
+    public function getModelBinding(): string
+    {
+        return Article::class;
+    }
 }

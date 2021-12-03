@@ -9,9 +9,12 @@
 namespace ShopModule\WeclappApi\Responses;
 
 use ShopModule\WeclappApi\Exceptions\MissingDataException;
+use ShopModule\WeclappApi\Traits\Responses\HasModelBinding;
 
 abstract class ObjectResponse extends Response
 {
+    use HasModelBinding;
+
     protected $notFound = false;
   
     public function __construct($data)
@@ -22,7 +25,16 @@ abstract class ObjectResponse extends Response
             $this->notFound = true;
         }
     }
-    
+
+    /**
+     * @param string $data
+     * @return mixed
+     */
+    protected function parseData(string $data)
+    {
+        return $this->bindModel(parent::parseData($data));
+    }
+
     public function notFound(): bool
     {
         return $this->notFound;

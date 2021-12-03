@@ -8,10 +8,12 @@
 
 namespace ShopModule\WeclappApi\Responses;
 
+use ShopModule\WeclappApi\Traits\Responses\HasModelBinding;
 use stdClass;
 
 abstract class SeveralResponse extends Response
 {
+    use HasModelBinding;
 
     /**
      * @param string $data
@@ -42,7 +44,7 @@ abstract class SeveralResponse extends Response
      */
     protected function parseItem(stdClass $data)
     {
-        return $data;
+        return $this->bindModel($data);
     }
 
 }

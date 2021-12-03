@@ -9,7 +9,13 @@
 
 namespace ShopModule\WeclappApi\Responses;
 
+use ShopModule\WeclappApi\Models\Article;
+
 class ArticleResponse extends ObjectResponse
 {
+    public function getModelBinding(): string
+    {
+        return Article::class;
+    }
 
 }
