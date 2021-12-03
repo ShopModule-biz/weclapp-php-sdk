@@ -6,11 +6,11 @@
  * @license GNU General Public License http://www.gnu.de/documents/gpl-2.0.de.html
  */
 
-namespace ShopModule\WeclappApi\Traits\Responses;
+namespace ShopModule\WeclappApi\Responses;
 
 use stdClass;
 
-trait IsSeveralResponse
+abstract class SeveralResponse extends Response
 {
 
     /**
