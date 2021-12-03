@@ -20,19 +20,4 @@ abstract class Model
         }
     }
 
-    public function getCustomAttributes(): array
-    {
-        return $this->customAttributes ?? [];
-    }
-
-    public function getCustomAttribute(int $attributeDefinitionId): ?stdClass
-    {
-        foreach ($this->getCustomAttributes() as $attribute) {
-            if ($attributeDefinitionId == $attribute->attributeDefinitionId) {
-                return $attribute->numberValue;
-            }
-        }
-        return null;
-    }
-
 }
