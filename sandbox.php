@@ -3,6 +3,7 @@
 require_once dirname(__FILE__) . '/vendor/autoload.php';
 
 use ShopModule\WeclappApi\Client;
+use ShopModule\WeclappApi\Requests\ArticleGetRequest;
 use ShopModule\WeclappApi\Requests\ArticlesGetRequest;
 use ShopModule\WeclappApi\Responses\Response;
 
@@ -73,6 +74,17 @@ function getArticles(): string
     $request = (new ArticlesGetRequest())
         ->setPage($page ?? 1)
         ->setPageSize($pageSize ?? 100);
+
+    return getResponseOutput($client, $client->sendRequest($request));
+}
+
+function getArticle(): string
+{
+    $id = getPostValue('getArticle-id');
+
+    $client = getClient();
+    $request = (new ArticleGetRequest())
+        ->setId($id);
 
     return getResponseOutput($client, $client->sendRequest($request));
 }
@@ -161,13 +173,31 @@ function handleRequest(string $request): ?string
                         <td><input type="text" id="getArticles-page" name="getArticles-page" value="<?php echo getPostValue('getArticles-page'); ?>" size="25"></td>
                     </tr>
                     <tr>
-                        <td style="width: 150px"><label for="getArticles-pageSize">PageSize</label></td>
+                        <td><label for="getArticles-pageSize">PageSize</label></td>
                         <td><input type="text" id="getArticles-pageSize" name="getArticles-pageSize" value="<?php echo getPostValue('getArticles-pageSize'); ?>" size="25"></td>
                     </tr>
                 </table>
                 <input type="submit" name="getArticles" value="Send request"><br />
             </div>
             <?php if ($result = handleRequest('getArticles')) { ?>
+                <div class="result">
+                    <h4>Result:</h4>
+                    <pre><?php echo $result; ?></pre>
+                </div>
+            <?php } ?>
+        </fieldset>
+        <fieldset>
+            <legend>GetArticle</legend>
+            <div>
+                <table>
+                    <tr>
+                        <td style="width: 150px"><label for="getArticle-id">ID</label></td>
+                        <td><input type="text" id="getArticle-id" name="getArticle-id" value="<?php echo getPostValue('getArticle-id'); ?>" size="25"></td>
+                    </tr>
+                </table>
+                <input type="submit" name="getArticle" value="Send request"><br />
+            </div>
+            <?php if ($result = handleRequest('getArticle')) { ?>
                 <div class="result">
                     <h4>Result:</h4>
                     <pre><?php echo $result; ?></pre>
