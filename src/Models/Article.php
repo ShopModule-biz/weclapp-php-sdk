@@ -16,11 +16,12 @@ class Article extends Model
         return $this->customAttributes ?? [];
     }
 
-    public function getCustomAttribute(int $attributeDefinitionId): ?string
+    public function getCustomAttribute(int $attributeDefinitionId, string $type = 'number'): ?string
     {
         foreach ($this->getCustomAttributes() as $attribute) {
             if ($attributeDefinitionId == $attribute->attributeDefinitionId) {
-                return $attribute->numberValue ?? null;
+                $field = $type . 'Value';
+                return $attribute->$field ?? null;
             }
         }
         return null;
