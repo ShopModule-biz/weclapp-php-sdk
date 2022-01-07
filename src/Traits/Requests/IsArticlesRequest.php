@@ -8,7 +8,7 @@
 
 namespace ShopModule\WeclappApi\Traits\Requests;
 
-trait IsArticleRequest
+trait IsArticlesRequest
 {
-    protected $resource = '/article/id/{id}';
+    protected $resource = 'article';
 }

@@ -59,13 +59,14 @@ abstract class Request
             throw MissingPropertyException::create(self::class, 'resource');
         }
         
-        $pieces = [
-            $this->resource,
-        ];
+        $pieces = explode('/', $this->resource);
         
         if ($this->usesTrait(HasResourceId::class) && method_exists($this, 'getId')) {
-            $pieces[] = 'id';
-            $pieces[] = $this->getId();
+            foreach ($pieces as $i => $p) {
+                if ('id' == $p && '{id}' == $pieces[$i + 1]) {
+                    $pieces[$i + 1] = $this->getId();
+                }
+            }
         }
 
         $path = implode('/', $pieces);
