@@ -63,10 +63,10 @@ class Client
      * @param string $tenant
      * @param string $token
      */
-    public function __construct(string $tenant, string $token)
+    public function __construct(?string $tenant = null, ?string $token = null)
     {
-        $this->setTenant($tenant);
-        $this->setToken($token);
+        null === $tenant || $this->setTenant($tenant);
+        null === $token || $this->setToken($token);
     }
 
     /**
