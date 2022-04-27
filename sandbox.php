@@ -6,6 +6,10 @@ use ShopModule\WeclappApi\Client;
 use ShopModule\WeclappApi\Requests\ArticleExtraInfoForAppGetRequest;
 use ShopModule\WeclappApi\Requests\ArticleGetRequest;
 use ShopModule\WeclappApi\Requests\ArticlesGetRequest;
+use ShopModule\WeclappApi\Requests\MoneyTransactionGetRequest;
+use ShopModule\WeclappApi\Requests\OpenItemGetRequest;
+use ShopModule\WeclappApi\Requests\OpenItemMarkAsPaidPostRequest;
+use ShopModule\WeclappApi\Requests\SalesChannelActiveSalesChannelsGetRequest;
 use ShopModule\WeclappApi\Responses\Response;
 
 function getDefault(string $key): ?string
@@ -97,6 +101,42 @@ function getArticleExtraInfoForApp(): string
     $client = getClient();
     $request = (new ArticleExtraInfoForAppGetRequest())
         ->setId($id);
+
+    return getResponseOutput($client, $client->sendRequest($request));
+}
+
+function getMoneyTransaction(): string
+{
+    $client = getClient();
+    $request = new MoneyTransactionGetRequest();
+
+    return getResponseOutput($client, $client->sendRequest($request));
+}
+
+function getOpenItem(): string
+{
+    $client = getClient();
+    $request = new OpenItemGetRequest();
+
+    return getResponseOutput($client, $client->sendRequest($request));
+}
+
+function openItemMarkAsPaid(): string
+{
+    $id = getPostValue('openItemMarkAsPaid-id');
+
+    $client = getClient();
+    $request = (new OpenItemMarkAsPaidPostRequest())
+        ->setId($id)
+        ->setData('datePaid', time());
+
+    return getResponseOutput($client, $client->sendRequest($request));
+}
+
+function getActiveSalesChannels(): string
+{
+    $client = getClient();
+    $request = new SalesChannelActiveSalesChannelsGetRequest();
 
     return getResponseOutput($client, $client->sendRequest($request));
 }
@@ -228,6 +268,60 @@ function handleRequest(string $request): ?string
                 <input type="submit" name="getArticleExtraInfoForApp" value="Send request"><br />
             </div>
             <?php if ($result = handleRequest('getArticleExtraInfoForApp')) { ?>
+                <div class="result">
+                    <h4>Result:</h4>
+                    <pre><?php echo $result; ?></pre>
+                </div>
+            <?php } ?>
+        </fieldset>
+        <fieldset>
+            <legend>GetMoneyTransaction</legend>
+            <div>
+                <input type="submit" name="getMoneyTransaction" value="Send request"><br />
+            </div>
+            <?php if ($result = handleRequest('getMoneyTransaction')) { ?>
+                <div class="result">
+                    <h4>Result:</h4>
+                    <pre><?php echo $result; ?></pre>
+                </div>
+            <?php } ?>
+        </fieldset>
+        <fieldset>
+            <legend>GetOpenItem</legend>
+            <div>
+                <input type="submit" name="getOpenItem" value="Send request"><br />
+            </div>
+            <?php if ($result = handleRequest('getOpenItem')) { ?>
+                <div class="result">
+                    <h4>Result:</h4>
+                    <pre><?php echo $result; ?></pre>
+                </div>
+            <?php } ?>
+        </fieldset>
+        <fieldset>
+            <legend>OpenItemMarkAsPaid</legend>
+            <div>
+                <table>
+                    <tr>
+                        <td style="width: 150px"><label for="openItemMarkAsPaid-id">ID</label></td>
+                        <td><input type="text" id="openItemMarkAsPaid-id" name="openItemMarkAsPaid-id" value="<?php echo getPostValue('openItemMarkAsPaid-id'); ?>" size="25"></td>
+                    </tr>
+                </table>
+                <input type="submit" name="openItemMarkAsPaid" value="Send request"><br />
+            </div>
+            <?php if ($result = handleRequest('openItemMarkAsPaid')) { ?>
+                <div class="result">
+                    <h4>Result:</h4>
+                    <pre><?php echo $result; ?></pre>
+                </div>
+            <?php } ?>
+        </fieldset>
+        <fieldset>
+            <legend>GetActiveSalesChannels</legend>
+            <div>
+                <input type="submit" name="getActiveSalesChannels" value="Send request"><br />
+            </div>
+            <?php if ($result = handleRequest('getActiveSalesChannels')) { ?>
                 <div class="result">
                     <h4>Result:</h4>
                     <pre><?php echo $result; ?></pre>

@@ -40,11 +40,11 @@ trait HasData
         $last = array_pop($keys);
         
         // walk/build the array to the specified key
-        while ($akey = array_shift($keys)) {
-            if ( ! array_key_exists($akey, $data)) {
-                $data[$akey] = [];
+        while ($aKey = array_shift($keys)) {
+            if ( ! array_key_exists($aKey, $data)) {
+                $data[$aKey] = [];
             }
-            $data = &$data[$akey];
+            $data = &$data[$aKey];
         }
 
         // set the final key
