@@ -9,13 +9,19 @@
 namespace ShopModule\WeclappApi\Requests;
 
 use ShopModule\WeclappApi\Responses\OrderResponse;
+use ShopModule\WeclappApi\Traits\Requests\HasData;
+use ShopModule\WeclappApi\Traits\Requests\IgnoresMissingProperties;
 use ShopModule\WeclappApi\Traits\Requests\HasResourceId;
-use ShopModule\WeclappApi\Traits\Requests\IsSalesOrderRequest;
+use ShopModule\WeclappApi\Traits\Requests\HasUrlParameter;
+use ShopModule\WeclappApi\Traits\Requests\IsSalesOrderIdRequest;
 
-class SalesOrderGetRequest extends GetRequest
+class SalesOrderIdPutRequest extends PutRequest
 {
+    use HasData;
+    use IgnoresMissingProperties;
+    use HasUrlParameter;
     use HasResourceId;
-    use IsSalesOrderRequest;
-    
+    use IsSalesOrderIdRequest;
+
     protected $responseClass = OrderResponse::class;
 }

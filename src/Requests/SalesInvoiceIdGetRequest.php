@@ -8,14 +8,14 @@
 
 namespace ShopModule\WeclappApi\Requests;
 
-use ShopModule\WeclappApi\Responses\OrderResponse;
+use ShopModule\WeclappApi\Responses\InvoiceResponse;
 use ShopModule\WeclappApi\Traits\Requests\HasResourceId;
-use ShopModule\WeclappApi\Traits\Requests\IsSalesOrderRequest;
+use ShopModule\WeclappApi\Traits\Requests\IsSalesInvoiceIdRequest;
 
-class SalesOrderGetRequest extends GetRequest
+class SalesInvoiceIdGetRequest extends GetRequest
 {
     use HasResourceId;
-    use IsSalesOrderRequest;
-    
-    protected $responseClass = OrderResponse::class;
+    use IsSalesInvoiceIdRequest;
+
+    protected $responseClass = InvoiceResponse::class;
 }

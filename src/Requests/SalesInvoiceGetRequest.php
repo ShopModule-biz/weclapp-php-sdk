@@ -9,16 +9,12 @@
 
 namespace ShopModule\WeclappApi\Requests;
 
-use ShopModule\WeclappApi\Requests\GetRequest;
-
-use ShopModule\WeclappApi\Traits\Requests\HasResourceId;
 use ShopModule\WeclappApi\Traits\Requests\IsSalesInvoiceRequest;
 
 use ShopModule\WeclappApi\Responses\InvoiceResponse;
 
 class SalesInvoiceGetRequest extends GetRequest
 {
-    use HasResourceId;
     use IsSalesInvoiceRequest;
     
     protected $responseClass = InvoiceResponse::class;

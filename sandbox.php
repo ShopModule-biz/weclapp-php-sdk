@@ -10,6 +10,10 @@ use ShopModule\WeclappApi\Requests\MoneyTransactionGetRequest;
 use ShopModule\WeclappApi\Requests\OpenItemGetRequest;
 use ShopModule\WeclappApi\Requests\OpenItemMarkAsPaidPostRequest;
 use ShopModule\WeclappApi\Requests\SalesChannelActiveSalesChannelsGetRequest;
+use ShopModule\WeclappApi\Requests\SalesInvoiceGetRequest;
+use ShopModule\WeclappApi\Requests\SalesInvoiceIdGetRequest;
+use ShopModule\WeclappApi\Requests\SalesInvoiceIdPutRequest;
+use ShopModule\WeclappApi\Requests\SalesOrderGetRequest;
 use ShopModule\WeclappApi\Responses\Response;
 
 function getDefault(string $key): ?string
@@ -76,7 +80,7 @@ function getArticles(): string
     $pageSize = getPostValue('getArticles-pageSize');
 
     $client = getClient();
-    $request = (new ArticlesGetRequest())
+    $request = (new ArticlesGetRequest)
         ->setPage($page ?? 1)
         ->setPageSize($pageSize ?? 100);
 
@@ -88,7 +92,7 @@ function getArticle(): string
     $id = getPostValue('getArticle-id');
 
     $client = getClient();
-    $request = (new ArticleGetRequest())
+    $request = (new ArticleGetRequest)
         ->setId($id);
 
     return getResponseOutput($client, $client->sendRequest($request));
@@ -99,11 +103,63 @@ function getArticleExtraInfoForApp(): string
     $id = getPostValue('getArticleExtraInfoForApp-id');
 
     $client = getClient();
-    $request = (new ArticleExtraInfoForAppGetRequest())
+    $request = (new ArticleExtraInfoForAppGetRequest)
         ->setId($id);
 
     return getResponseOutput($client, $client->sendRequest($request));
 }
+
+function getSalesOrder(): string
+{
+    $client = getClient();
+    $request = new SalesOrderGetRequest;
+
+    return getResponseOutput($client, $client->sendRequest($request));
+}
+
+function getSalesOrderId(): string
+{
+    $id = getPostValue('getSalesOrderId-id');
+
+    $client = getClient();
+    $request = (new SalesOrderGetRequest)
+        ->setId($id);
+
+    return getResponseOutput($client, $client->sendRequest($request));
+}
+
+function getSalesInvoice(): string
+{
+    $client = getClient();
+    $request = new SalesInvoiceGetRequest;
+
+    return getResponseOutput($client, $client->sendRequest($request));
+}
+
+function getSalesInvoiceId(): string
+{
+    $id = getPostValue('getSalesInvoiceId-id');
+
+    $client = getClient();
+    $request = (new SalesInvoiceIdGetRequest())
+        ->setId($id);
+    
+    return getResponseOutput($client, $client->sendRequest($request));
+}
+
+function putSalesInvoice(): string
+{
+    $id = getPostValue('putSalesInvoice-id');
+    $status = getPostValue('putSalesInvoice-status');
+
+    $client = getClient();
+    $request = (new SalesInvoiceIdPutRequest)
+        ->setId($id)
+        ->setData('status', $status);
+
+    return getResponseOutput($client, $client->sendRequest($request));
+}
+
 
 function getMoneyTransaction(): string
 {
@@ -124,11 +180,12 @@ function getOpenItem(): string
 function openItemMarkAsPaid(): string
 {
     $id = getPostValue('openItemMarkAsPaid-id');
+    $date = time() . '000';
 
     $client = getClient();
-    $request = (new OpenItemMarkAsPaidPostRequest())
+    $request = (new OpenItemMarkAsPaidPostRequest)
         ->setId($id)
-        ->setData('datePaid', time());
+        ->setData('datePaid', $date);
 
     return getResponseOutput($client, $client->sendRequest($request));
 }
@@ -243,7 +300,7 @@ function handleRequest(string $request): ?string
             <div>
                 <table>
                     <tr>
-                        <td style="width: 150px"><label for="getArticle-id">ID</label></td>
+                        <td style="width: 150px"><label for="getArticle-id">Article-ID</label></td>
                         <td><input type="text" id="getArticle-id" name="getArticle-id" value="<?php echo getPostValue('getArticle-id'); ?>" size="25"></td>
                     </tr>
                 </table>
@@ -261,13 +318,110 @@ function handleRequest(string $request): ?string
             <div>
                 <table>
                     <tr>
-                        <td style="width: 150px"><label for="getArticleExtraInfoForApp-id">ID</label></td>
+                        <td style="width: 150px"><label for="getArticleExtraInfoForApp-id">Article-ID</label></td>
                         <td><input type="text" id="getArticleExtraInfoForApp-id" name="getArticleExtraInfoForApp-id" value="<?php echo getPostValue('getArticleExtraInfoForApp-id'); ?>" size="25"></td>
                     </tr>
                 </table>
                 <input type="submit" name="getArticleExtraInfoForApp" value="Send request"><br />
             </div>
             <?php if ($result = handleRequest('getArticleExtraInfoForApp')) { ?>
+                <div class="result">
+                    <h4>Result:</h4>
+                    <pre><?php echo $result; ?></pre>
+                </div>
+            <?php } ?>
+        </fieldset>
+        <fieldset>
+            <legend>GetSalesOrder</legend>
+            <div>
+                <input type="submit" name="getSalesOrder" value="Send request"><br />
+            </div>
+            <?php if ($result = handleRequest('getSalesOrder')) { ?>
+                <div class="result">
+                    <h4>Result:</h4>
+                    <pre><?php echo $result; ?></pre>
+                </div>
+            <?php } ?>
+        </fieldset>
+        <fieldset>
+            <legend>GetSalesOrderId</legend>
+            <div>
+                <table>
+                    <tr>
+                        <td style="width: 150px"><label for="getSalesOrderId-id">SalesOrder-ID</label></td>
+                        <td><input type="text" id="getSalesOrderId-id" name="getSalesOrderId-id" value="<?php echo getPostValue('getSalesOrderId-id'); ?>" size="25"></td>
+                    </tr>
+                </table>
+                <input type="submit" name="getSalesOrderId" value="Send request"><br />
+            </div>
+            <?php if ($result = handleRequest('GetSalesOrderId')) { ?>
+                <div class="result">
+                    <h4>Result:</h4>
+                    <pre><?php echo $result; ?></pre>
+                </div>
+            <?php } ?>
+        </fieldset>
+        <fieldset>
+            <legend>GetSalesInvoice</legend>
+            <div>
+                <input type="submit" name="getSalesInvoice" value="Send request"><br />
+            </div>
+            <?php if ($result = handleRequest('getSalesInvoice')) { ?>
+                <div class="result">
+                    <h4>Result:</h4>
+                    <pre><?php echo $result; ?></pre>
+                </div>
+            <?php } ?>
+        </fieldset>
+        <fieldset>
+            <legend>GetSalesInvoiceId</legend>
+            <div>
+                <table>
+                    <tr>
+                        <td style="width: 150px"><label for="getSalesInvoiceId-id">SalesInvoice-ID</label></td>
+                        <td><input type="text" id="getSalesInvoiceId-id" name="getSalesInvoiceId-id" value="<?php echo getPostValue('getSalesInvoiceId-id'); ?>" size="25"></td>
+                    </tr>
+                </table>
+                <input type="submit" name="getSalesInvoiceId" value="Send request"><br />
+            </div>
+            <?php if ($result = handleRequest('getSalesInvoiceId')) { ?>
+                <div class="result">
+                    <h4>Result:</h4>
+                    <pre><?php echo $result; ?></pre>
+                </div>
+            <?php } ?>
+        </fieldset>
+        <fieldset>
+            <legend>PutSalesInvoice</legend>
+            <div>
+                <table>
+                    <tr>
+                        <td style="width: 150px"><label for="putSalesInvoice-id">SalesInvoice-ID</label></td>
+                        <td><input type="text" id="putSalesInvoice-id" name="putSalesInvoice-id" value="<?php echo getPostValue('putSalesInvoice-id'); ?>" size="25"></td>
+                    </tr>
+                    <tr>
+                        <td style="width: 150px"><label for="putSalesInvoice-status">Status</label></td>
+                        <td>
+                            <select id="putSalesInvoice-status" name="putSalesInvoice-status">
+                                <option value="APPROVED">APPROVED</option>
+                                <option value="BOOKED">BOOKED</option>
+                                <option value="BOOKING_APPROVED">BOOKING_APPROVED</option>
+                                <option value="BOOKING_ERROR">BOOKING_ERROR</option>
+                                <option value="DOCUMENT_CREATED">DOCUMENT_CREATED</option>
+                                <option value="ENTRY_COMPLETED">ENTRY_COMPLETED</option>
+                                <option value="INVOICE_CHECKED">INVOICE_CHECKED</option>
+                                <option value="INVOICE_VERIFICATION">INVOICE_VERIFICATION</option>
+                                <option value="NEW">NEW</option>
+                                <option value="QUERY_INVOICE">QUERY_INVOICE</option>
+                                <option value="SENT">SENT</option>
+                                <option value="VOID">VOID</option>
+                            </select>
+                        </td>
+                    </tr>
+                </table>
+                <input type="submit" name="putSalesInvoice" value="Send request"><br />
+            </div>
+            <?php if ($result = handleRequest('putSalesInvoice')) { ?>
                 <div class="result">
                     <h4>Result:</h4>
                     <pre><?php echo $result; ?></pre>
@@ -303,7 +457,7 @@ function handleRequest(string $request): ?string
             <div>
                 <table>
                     <tr>
-                        <td style="width: 150px"><label for="openItemMarkAsPaid-id">ID</label></td>
+                        <td style="width: 150px"><label for="openItemMarkAsPaid-id">OpenItem-ID</label></td>
                         <td><input type="text" id="openItemMarkAsPaid-id" name="openItemMarkAsPaid-id" value="<?php echo getPostValue('openItemMarkAsPaid-id'); ?>" size="25"></td>
                     </tr>
                 </table>

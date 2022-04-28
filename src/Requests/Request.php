@@ -48,6 +48,21 @@ abstract class Request
     }
 
     /**
+     * returns the defined resource
+     *
+     * @return string
+     * @throws MissingPropertyException
+     */
+    protected function getResource(): string
+    {
+        if ( ! isset($this->resource) || ! $this->resource) {
+            throw MissingPropertyException::create(self::class, 'resource');
+        }
+
+        return $this->resource;
+    }
+
+    /**
      * Generates the URL path for the request.
      *
      * @return string
@@ -55,11 +70,7 @@ abstract class Request
      */
     public function getPath(): string
     {
-        if ( ! isset($this->resource) || ! $this->resource) {
-            throw MissingPropertyException::create(self::class, 'resource');
-        }
-        
-        $pieces = explode('/', $this->resource);
+        $pieces = explode('/', $this->getResource());
         
         if ($this->usesTrait(HasResourceId::class) && method_exists($this, 'getId')) {
             foreach ($pieces as $i => $p) {

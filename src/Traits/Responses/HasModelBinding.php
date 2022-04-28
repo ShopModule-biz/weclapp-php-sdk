@@ -13,7 +13,7 @@ use stdClass;
 trait HasModelBinding
 {
 
-    public function bindModel(stdClass $object): object
+    public function bindModel(?stdClass $object): ?object
     {
         if ( ! method_exists($this, 'getModelBinding')) {
             return $object;

@@ -60,8 +60,8 @@ class Client
     private $curlErrno = null;
 
     /**
-     * @param string $tenant
-     * @param string $token
+     * @param string|null $tenant
+     * @param string|null $token
      */
     public function __construct(?string $tenant = null, ?string $token = null)
     {
