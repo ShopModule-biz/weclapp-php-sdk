@@ -4,7 +4,13 @@ A software development kit (SDK) to access the weclapp API quickly and easily.
 API documentation: https://www.weclapp.com/api/
 
 # How to use
-You can download the Package over composer with following line in composer File:
+You can download the Package over composer
+
+```
+composer require shopmodule-biz/weclapp-php-sdk
+```
+
+or with following line in composer File:
 
 ```
 "require": {
