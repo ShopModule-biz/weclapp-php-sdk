@@ -10,6 +10,10 @@ namespace ShopModule\WeclappApi\Models;
 
 class Article extends Model
 {
+    /**
+     * @var array
+     */
+    private $articlePrices = [];
 
     public function getCustomAttributes(): array
     {
@@ -26,7 +30,7 @@ class Article extends Model
         }
         return null;
     }
-    
+
     public function setArticlePrices(array $prices): self
     {
         $this->articlePrices = [];
@@ -35,13 +39,36 @@ class Article extends Model
             $this->articlePrices[] = (new ArticlePrice())
                 ->castFrom($price);
         }
-        
+
         return $this;
     }
 
-    public function getArticlePrices(): array
+    public function getArticlePrices(?string $salesChannel = null, ?string $date = null, ?float $quantity = null): array
     {
-        return $this->articlePrices ?? [];
+        $prices = [];
+
+        foreach ($this->articlePrices as $price) {
+            /** @var ArticlePrice $price **/
+
+            // check sales channel
+            if (null !== $salesChannel && ! $price->isSalesChannel($salesChannel)) {
+                continue;
+            }
+
+            // check time
+            if (null !== $date && ! $price->isValid($date)) {
+                continue;
+            }
+
+            // check quantity
+            if (null !== $quantity && ! $price->isForQuantity($quantity)) {
+                continue;
+            }
+
+            $prices[] = $price;
+        }
+
+        return $prices;
     }
 
 }

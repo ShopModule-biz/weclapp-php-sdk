@@ -10,6 +10,10 @@ namespace ShopModule\WeclappApi\Models;
 
 class ArticlePrice extends Model
 {
+    /**
+     * @param string $date
+     * @return bool
+     */
     public function isValid(string $date = 'now'): bool
     {
         $time = strtotime($date) . '000';
@@ -26,4 +30,41 @@ class ArticlePrice extends Model
 
         return true;
     }
+
+    /**
+     * @param string $channel
+     * @return bool
+     */
+    public function isSalesChannel(string $channel): bool
+    {
+        return (string) $this->salesChannel === $channel;
+    }
+
+    /**
+     * @param float $quantity
+     * @return bool
+     */
+    public function isForQuantity(float $quantity): bool
+    {
+        if ( ! isset($this->priceScaleType) || ! isset($this->priceScaleValue)) {
+            return true;
+        }
+
+        switch ($this->priceScaleType) {
+            case 'SCALE_FROM':
+                if ($this->priceScaleValue > $quantity) {
+                    return false;
+                }
+                break;
+
+            case 'SCALE_TO':
+                if ($this->priceScaleValue < $quantity) {
+                    return false;
+                }
+                break;
+        }
+
+        return true;
+    }
+
 }
