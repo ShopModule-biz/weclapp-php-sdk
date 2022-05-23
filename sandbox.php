@@ -14,6 +14,7 @@ use ShopModule\WeclappApi\Requests\SalesInvoiceGetRequest;
 use ShopModule\WeclappApi\Requests\SalesInvoiceIdGetRequest;
 use ShopModule\WeclappApi\Requests\SalesInvoiceIdPutRequest;
 use ShopModule\WeclappApi\Requests\SalesOrderGetRequest;
+use ShopModule\WeclappApi\Requests\WarehouseStocksGetRequest;
 use ShopModule\WeclappApi\Responses\Response;
 
 function getDefault(string $key): ?string
@@ -141,7 +142,7 @@ function getSalesInvoiceId(): string
     $id = getPostValue('getSalesInvoiceId-id');
 
     $client = getClient();
-    $request = (new SalesInvoiceIdGetRequest())
+    $request = (new SalesInvoiceIdGetRequest)
         ->setId($id);
     
     return getResponseOutput($client, $client->sendRequest($request));
@@ -164,7 +165,7 @@ function putSalesInvoice(): string
 function getMoneyTransaction(): string
 {
     $client = getClient();
-    $request = new MoneyTransactionGetRequest();
+    $request = new MoneyTransactionGetRequest;
 
     return getResponseOutput($client, $client->sendRequest($request));
 }
@@ -172,7 +173,7 @@ function getMoneyTransaction(): string
 function getOpenItem(): string
 {
     $client = getClient();
-    $request = new OpenItemGetRequest();
+    $request = new OpenItemGetRequest;
 
     return getResponseOutput($client, $client->sendRequest($request));
 }
@@ -193,7 +194,15 @@ function openItemMarkAsPaid(): string
 function getActiveSalesChannels(): string
 {
     $client = getClient();
-    $request = new SalesChannelActiveSalesChannelsGetRequest();
+    $request = new SalesChannelActiveSalesChannelsGetRequest;
+
+    return getResponseOutput($client, $client->sendRequest($request));
+}
+
+function getWarehouseStocks(): string
+{
+    $client = getClient();
+    $request = new WarehouseStocksGetRequest;
 
     return getResponseOutput($client, $client->sendRequest($request));
 }
@@ -476,6 +485,18 @@ function handleRequest(string $request): ?string
                 <input type="submit" name="getActiveSalesChannels" value="Send request"><br />
             </div>
             <?php if ($result = handleRequest('getActiveSalesChannels')) { ?>
+                <div class="result">
+                    <h4>Result:</h4>
+                    <pre><?php echo $result; ?></pre>
+                </div>
+            <?php } ?>
+        </fieldset>
+        <fieldset>
+            <legend>GetWarehouseStocks</legend>
+            <div>
+                <input type="submit" name="getWarehouseStocks" value="Send request"><br />
+            </div>
+            <?php if ($result = handleRequest('getWarehouseStocks')) { ?>
                 <div class="result">
                     <h4>Result:</h4>
                     <pre><?php echo $result; ?></pre>
