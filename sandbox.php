@@ -15,6 +15,8 @@ use ShopModule\WeclappApi\Requests\SalesInvoiceIdGetRequest;
 use ShopModule\WeclappApi\Requests\SalesInvoiceIdPutRequest;
 use ShopModule\WeclappApi\Requests\SalesOrderGetRequest;
 use ShopModule\WeclappApi\Requests\SalesOrderIdPutRequest;
+use ShopModule\WeclappApi\Requests\ShipmentGetRequest;
+use ShopModule\WeclappApi\Requests\ShipmentIdGetRequest;
 use ShopModule\WeclappApi\Requests\WarehouseStocksGetRequest;
 use ShopModule\WeclappApi\Responses\Response;
 
@@ -233,6 +235,26 @@ function handleRequest(string $request): ?string
     }
     return null;
 }
+
+function getShipment(): string
+{
+    $client = getClient();
+    $request = new ShipmentGetRequest;
+
+    return getResponseOutput($client, $client->sendRequest($request));
+}
+
+function getShipmentId(): string
+{
+    $id = getPostValue('getShipmentId-id');
+
+    $client = getClient();
+    $request = (new ShipmentIdGetRequest())
+        ->setId($id);
+
+    return getResponseOutput($client, $client->sendRequest($request));
+}
+
 
 ?>
 <html lang="en">
@@ -540,6 +562,36 @@ function handleRequest(string $request): ?string
                 <input type="submit" name="getWarehouseStocks" value="Send request"><br />
             </div>
             <?php if ($result = handleRequest('getWarehouseStocks')) { ?>
+                <div class="result">
+                    <h4>Result:</h4>
+                    <pre><?php echo $result; ?></pre>
+                </div>
+            <?php } ?>
+        </fieldset>
+        <fieldset>
+            <legend>GetShipment</legend>
+            <div>
+                <input type="submit" name="getShipment" value="Send request"><br />
+            </div>
+            <?php if ($result = handleRequest('getShipment')) { ?>
+                <div class="result">
+                    <h4>Result:</h4>
+                    <pre><?php echo $result; ?></pre>
+                </div>
+            <?php } ?>
+        </fieldset>
+        <fieldset>
+            <legend>GetShipmentId</legend>
+            <div>
+                <table>
+                    <tr>
+                        <td style="width: 150px"><label for="getShipmentId-id">Shipment-ID</label></td>
+                        <td><input type="text" id="getShipmentId-id" name="getShipmentId-id" value="<?php echo getPostValue('getShipmentId-id'); ?>" size="25"></td>
+                    </tr>
+                </table>
+                <input type="submit" name="getShipmentId" value="Send request"><br />
+            </div>
+            <?php if ($result = handleRequest('getShipmentId')) { ?>
                 <div class="result">
                     <h4>Result:</h4>
                     <pre><?php echo $result; ?></pre>

@@ -6,9 +6,9 @@
  * @license GNU General Public License http://www.gnu.de/documents/gpl-2.0.de.html
  */
 
-namespace ShopModule\WeclappApi\Traits\Requests;
+namespace ShopModule\WeclappApi\Responses;
 
-trait IsSalesInvoiceRequest
+class ShipmentResponse extends ObjectResponse
 {
-    protected $resource = 'salesInvoice';
+
 }

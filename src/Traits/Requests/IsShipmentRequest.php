@@ -8,7 +8,7 @@
 
 namespace ShopModule\WeclappApi\Traits\Requests;
 
-trait IsSalesInvoiceRequest
+trait IsShipmentRequest
 {
-    protected $resource = 'salesInvoice';
+    protected $resource = 'shipment';
 }
