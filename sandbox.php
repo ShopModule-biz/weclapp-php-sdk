@@ -14,6 +14,7 @@ use ShopModule\WeclappApi\Requests\SalesInvoiceGetRequest;
 use ShopModule\WeclappApi\Requests\SalesInvoiceIdGetRequest;
 use ShopModule\WeclappApi\Requests\SalesInvoiceIdPutRequest;
 use ShopModule\WeclappApi\Requests\SalesOrderGetRequest;
+use ShopModule\WeclappApi\Requests\SalesOrderIdPutRequest;
 use ShopModule\WeclappApi\Requests\WarehouseStocksGetRequest;
 use ShopModule\WeclappApi\Responses\Response;
 
@@ -129,6 +130,19 @@ function getSalesOrderId(): string
     return getResponseOutput($client, $client->sendRequest($request));
 }
 
+function putSalesOrder(): string
+{
+    $id = getPostValue('putSalesOrder-id');
+    $status = getPostValue('putSalesOrder-status');
+
+    $client = getClient();
+    $request = (new SalesOrderIdPutRequest)
+        ->setId($id)
+        ->setData('status', $status);
+
+    return getResponseOutput($client, $client->sendRequest($request));
+}
+
 function getSalesInvoice(): string
 {
     $client = getClient();
@@ -160,7 +174,6 @@ function putSalesInvoice(): string
 
     return getResponseOutput($client, $client->sendRequest($request));
 }
-
 
 function getMoneyTransaction(): string
 {
@@ -364,6 +377,36 @@ function handleRequest(string $request): ?string
                 <input type="submit" name="getSalesOrderId" value="Send request"><br />
             </div>
             <?php if ($result = handleRequest('getSalesOrderId')) { ?>
+                <div class="result">
+                    <h4>Result:</h4>
+                    <pre><?php echo $result; ?></pre>
+                </div>
+            <?php } ?>
+        </fieldset>
+        <fieldset>
+            <legend>PutSalesOrder</legend>
+            <div>
+                <table>
+                    <tr>
+                        <td style="width: 150px"><label for="putSalesOrder-id">SalesOrder-ID</label></td>
+                        <td><input type="text" id="putSalesOrder-id" name="putSalesOrder-id" value="<?php echo getPostValue('putSalesOrder-id'); ?>" size="25"></td>
+                    </tr>
+                    <tr>
+                        <td style="width: 150px"><label for="putSalesOrder-status">Status</label></td>
+                        <td>
+                            <select id="putSalesOrder-status" name="putSalesOrder-status">
+                                <option value="CANCELLED">CANCELLED</option>
+                                <option value="CLOSED">CLOSED</option>
+                                <option value="MANUALLY_CLOSED">MANUALLY_CLOSED</option>
+                                <option value="ORDER_CONFIRMATION_PRINTED">ORDER_CONFIRMATION_PRINTED</option>
+                                <option value="ORDER_ENTRY_IN_PROGRESS">ORDER_ENTRY_IN_PROGRESS</option>
+                            </select>
+                        </td>
+                    </tr>
+                </table>
+                <input type="submit" name="putSalesOrder" value="Send request"><br />
+            </div>
+            <?php if ($result = handleRequest('putSalesOrder')) { ?>
                 <div class="result">
                     <h4>Result:</h4>
                     <pre><?php echo $result; ?></pre>
