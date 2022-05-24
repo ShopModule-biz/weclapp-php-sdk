@@ -363,7 +363,7 @@ function handleRequest(string $request): ?string
                 </table>
                 <input type="submit" name="getSalesOrderId" value="Send request"><br />
             </div>
-            <?php if ($result = handleRequest('GetSalesOrderId')) { ?>
+            <?php if ($result = handleRequest('getSalesOrderId')) { ?>
                 <div class="result">
                     <h4>Result:</h4>
                     <pre><?php echo $result; ?></pre>
