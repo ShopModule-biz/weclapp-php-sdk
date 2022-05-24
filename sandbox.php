@@ -16,7 +16,7 @@ use ShopModule\WeclappApi\Requests\SalesInvoiceIdPutRequest;
 use ShopModule\WeclappApi\Requests\SalesOrderGetRequest;
 use ShopModule\WeclappApi\Requests\SalesOrderIdPutRequest;
 use ShopModule\WeclappApi\Requests\ShipmentGetRequest;
-use ShopModule\WeclappApi\Requests\ShipmentIdGetRequest;
+use ShopModule\WeclappApi\Requests\ShipmentsGetRequest;
 use ShopModule\WeclappApi\Requests\WarehouseStocksGetRequest;
 use ShopModule\WeclappApi\Responses\Response;
 
@@ -236,20 +236,25 @@ function handleRequest(string $request): ?string
     return null;
 }
 
-function getShipment(): string
+function getShipments(): string
 {
+    $page = getPostValue('getShipments-page');
+    $pageSize = getPostValue('getShipments-pageSize');
+
     $client = getClient();
-    $request = new ShipmentGetRequest;
+    $request = (new ShipmentsGetRequest)
+        ->setPage($page ?? 1)
+        ->setPageSize($pageSize ?? 100);
 
     return getResponseOutput($client, $client->sendRequest($request));
 }
 
-function getShipmentId(): string
+function getShipment(): string
 {
-    $id = getPostValue('getShipmentId-id');
+    $id = getPostValue('getShipment-id');
 
     $client = getClient();
-    $request = (new ShipmentIdGetRequest())
+    $request = (new ShipmentGetRequest)
         ->setId($id);
 
     return getResponseOutput($client, $client->sendRequest($request));
@@ -569,11 +574,21 @@ function getShipmentId(): string
             <?php } ?>
         </fieldset>
         <fieldset>
-            <legend>GetShipment</legend>
+            <legend>GetShipments</legend>
             <div>
-                <input type="submit" name="getShipment" value="Send request"><br />
+                <table>
+                    <tr>
+                        <td style="width: 150px"><label for="getShipments-page">Page</label></td>
+                        <td><input type="text" id="getShipments-page" name="getShipments-page" value="<?php echo getPostValue('getShipments-page'); ?>" size="25"></td>
+                    </tr>
+                    <tr>
+                        <td><label for="getShipments-pageSize">PageSize</label></td>
+                        <td><input type="text" id="getShipments-pageSize" name="getShipments-pageSize" value="<?php echo getPostValue('getShipments-pageSize'); ?>" size="25"></td>
+                    </tr>
+                </table>
+                <input type="submit" name="getShipments" value="Send request"><br />
             </div>
-            <?php if ($result = handleRequest('getShipment')) { ?>
+            <?php if ($result = handleRequest('getShipments')) { ?>
                 <div class="result">
                     <h4>Result:</h4>
                     <pre><?php echo $result; ?></pre>
@@ -581,17 +596,17 @@ function getShipmentId(): string
             <?php } ?>
         </fieldset>
         <fieldset>
-            <legend>GetShipmentId</legend>
+            <legend>GetShipment</legend>
             <div>
                 <table>
                     <tr>
-                        <td style="width: 150px"><label for="getShipmentId-id">Shipment-ID</label></td>
-                        <td><input type="text" id="getShipmentId-id" name="getShipmentId-id" value="<?php echo getPostValue('getShipmentId-id'); ?>" size="25"></td>
+                        <td style="width: 150px"><label for="getShipment-id">Shipment-ID</label></td>
+                        <td><input type="text" id="getShipment-id" name="getShipment-id" value="<?php echo getPostValue('getShipment-id'); ?>" size="25"></td>
                     </tr>
                 </table>
-                <input type="submit" name="getShipmentId" value="Send request"><br />
+                <input type="submit" name="getShipment" value="Send request"><br />
             </div>
-            <?php if ($result = handleRequest('getShipmentId')) { ?>
+            <?php if ($result = handleRequest('getShipment')) { ?>
                 <div class="result">
                     <h4>Result:</h4>
                     <pre><?php echo $result; ?></pre>

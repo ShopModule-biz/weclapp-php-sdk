@@ -9,11 +9,13 @@
 namespace ShopModule\WeclappApi\Requests;
 
 use ShopModule\WeclappApi\Responses\ShipmentResponse;
-use ShopModule\WeclappApi\Traits\Requests\IsShipmentRequest;
+use ShopModule\WeclappApi\Traits\Requests\HasResourceId;
+use ShopModule\WeclappApi\Traits\Requests\IsShipmentIdRequest;
 
 class ShipmentGetRequest extends GetRequest
 {
-    use IsShipmentRequest;
+    use HasResourceId;
+    use IsShipmentIdRequest;
 
     protected $responseClass = ShipmentResponse::class;
 }
