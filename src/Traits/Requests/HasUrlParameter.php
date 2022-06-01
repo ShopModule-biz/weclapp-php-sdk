@@ -33,7 +33,7 @@ trait HasUrlParameter
     private function getUrlParameterMethods(): array
     {
         $methods = [];
-        foreach (class_uses($this) as $uses) {
+        foreach ($this->usesTraits() as $uses) {
             $method = $this->buildGetUrlParameterMethodName($uses);
             if (method_exists($this, $method)) {
                 $methods[] = $method;
@@ -58,6 +58,31 @@ trait HasUrlParameter
     {
         $pieces = explode('\\', $classname);
         return array_pop($pieces);
+    }
+
+    /**
+     * Return the traits used by the given class recursive
+     *
+     * @param string|null $class
+     * @return array
+     */
+    private function usesTraits(?string $class = null): array
+    {
+        if (null == $class) {
+            $class = $this;
+        }
+
+        $traits = class_uses($class);
+
+        if ($parent = get_parent_class($class)) {
+            $traits = array_merge($traits, $this->usesTraits($parent));
+        }
+
+        foreach ($traits as $trait) {
+            $traits = array_merge($traits, $this->usesTraits($trait));
+        }
+
+        return $traits;
     }
 
 }

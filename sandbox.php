@@ -20,6 +20,9 @@ use ShopModule\WeclappApi\Requests\ShipmentsGetRequest;
 use ShopModule\WeclappApi\Requests\WarehouseStocksGetRequest;
 use ShopModule\WeclappApi\Responses\Response;
 
+error_reporting(E_ALL);
+ini_set('display_errors', true);
+
 function getDefault(string $key): ?string
 {
     switch ($key) {
@@ -87,6 +90,23 @@ function getArticles(): string
     $request = (new ArticlesGetRequest)
         ->setPage($page ?? 1)
         ->setPageSize($pageSize ?? 100);
+
+    $i = 0;
+    do {
+        if (null === getPostValue('getArticles-filter-' . $i . '-property')
+            || null === getPostValue('getArticles-filter-' . $i . '-operator')
+        ) {
+            break;
+        }
+
+        $request->filter(
+            getPostValue('getArticles-filter-' . $i . '-property'),
+            getPostValue('getArticles-filter-' . $i . '-operator'),
+            getPostValue('getArticles-filter-' . $i . '-query')
+        );
+
+        $i++;
+    } while (1);
 
     return getResponseOutput($client, $client->sendRequest($request));
 }
@@ -333,6 +353,59 @@ function getShipment(): string
                     <tr>
                         <td><label for="getArticles-pageSize">PageSize</label></td>
                         <td><input type="text" id="getArticles-pageSize" name="getArticles-pageSize" value="<?php echo getPostValue('getArticles-pageSize'); ?>" size="25"></td>
+                    </tr>
+                    <tr>
+                        <td><label for="filter">Filter</label></td>
+                        <td>
+                            <table>
+                                <?php for ($i = 0; $i < 5; $i++):?>
+                                    <tr>
+                                        <td>
+                                            <select name="getArticles-filter-<?php echo $i; ?>-property">
+                                                <?php
+                                                    foreach ([
+                                                        '' => '',
+                                                        'articleNumber' => 'articleNumber',
+                                                        'articleType' => 'articleType',
+                                                        'createdDate' => 'createdDate',
+                                                        'lastModifiedDate' => 'lastModifiedDate',
+                                                        'name' => 'name',
+                                                    ] as $key => $value) {
+                                                        echo '<option value="' . $key . '"' . ($key == getPostValue('getArticles-filter-' . $i . '-property') ? ' selected' : '') . '>' . $value . '</option>';
+                                                    }
+                                                ?>
+                                            </select>
+                                        </td>
+                                        <td>
+                                            <select name="getArticles-filter-<?php echo $i; ?>-operator">
+                                                <?php
+                                                    foreach ([
+                                                        '' => '',
+                                                        'eq' => 'equal',
+                                                        'ne' => 'not equal',
+                                                        'lt' => 'less than',
+                                                        'gt' => 'greater than',
+                                                        'le' => 'less equal',
+                                                        'ge' => 'greater equal',
+                                                        'null' => 'is null',
+                                                        'notnull' => 'is not null',
+                                                        'like' => 'like',
+                                                        'notlike' => 'not like',
+                                                        'ilike' => 'like, ignoring case',
+                                                        'notilike' => 'not like, ignoring case',
+                                                        'in' => 'is in the specified list',
+                                                        'notin' => 'not in the specified list',
+                                                    ] as $key => $value) {
+                                                        echo '<option value="' . $key . '"' . ($key == getPostValue('getArticles-filter-' . $i . '-operator') ? ' selected' : '') . '>' . $value . '</option>';
+                                                    }
+                                                ?>
+                                            </select>
+                                        </td>
+                                        <td><input type="text" name="getArticles-filter-<?php echo $i; ?>-query" value="<?php echo getPostValue('getArticles-filter-' . $i . '-query'); ?>"></td>
+                                    </tr>
+                                <?php endfor; ?>
+                            </table>
+                        </td>
                     </tr>
                 </table>
                 <input type="submit" name="getArticles" value="Send request"><br />

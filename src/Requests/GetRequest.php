@@ -9,10 +9,11 @@
 
 namespace ShopModule\WeclappApi\Requests;
 
-use ShopModule\WeclappApi\Requests\Request;
+use ShopModule\WeclappApi\Traits\Requests\IsFilterable;
 
 abstract class GetRequest extends Request
 {
+    use IsFilterable;
+
     protected $method = 'GET';
-    
 }
