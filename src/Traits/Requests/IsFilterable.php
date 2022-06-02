@@ -20,7 +20,7 @@ trait IsFilterable
     public function filter(string $property, string $operator, $query): self
     {
         if (is_array($query)) {
-            $query = '["' . implode('","', $query) . '"]';
+            $query = json_encode($query);
         }
 
         $attribute = urlencode($property . '-' . $operator);
