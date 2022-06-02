@@ -19,6 +19,10 @@ trait IsFilterable
      */
     public function filter(string $property, string $operator, $query): self
     {
+        if (is_array($query)) {
+            $query = '["' . implode('","', $query) . '"]';
+        }
+
         $attribute = urlencode($property . '-' . $operator);
         $this->filters[$attribute] = urlencode($query);
         return $this;
