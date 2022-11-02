@@ -8,7 +8,7 @@
 
 namespace ShopModule\WeclappApi\Requests;
 
-use ShopModule\WeclappApi\Responses\CustomerResponse;
+use ShopModule\WeclappApi\Responses\CustomersResponse;
 use ShopModule\WeclappApi\Traits\Requests\HasPages;
 use ShopModule\WeclappApi\Traits\Requests\IsCustomersRequest;
 
@@ -17,5 +17,5 @@ class CustomersGetRequest extends GetRequest
     use HasPages;
     use IsCustomersRequest;
 
-    protected $responseClass = CustomerResponse::class;
+    protected $responseClass = CustomersResponse::class;
 }

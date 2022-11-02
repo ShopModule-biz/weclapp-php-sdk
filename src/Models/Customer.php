@@ -8,7 +8,7 @@
 
 namespace ShopModule\WeclappApi\Models;
 
-class Customer
+class Customer extends Model
 {
     //
 }

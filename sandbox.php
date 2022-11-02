@@ -6,6 +6,8 @@ use ShopModule\WeclappApi\Client;
 use ShopModule\WeclappApi\Requests\ArticleExtraInfoForAppGetRequest;
 use ShopModule\WeclappApi\Requests\ArticleGetRequest;
 use ShopModule\WeclappApi\Requests\ArticlesGetRequest;
+use ShopModule\WeclappApi\Requests\CustomerGetRequest;
+use ShopModule\WeclappApi\Requests\CustomersGetRequest;
 use ShopModule\WeclappApi\Requests\MoneyTransactionGetRequest;
 use ShopModule\WeclappApi\Requests\OpenItemGetRequest;
 use ShopModule\WeclappApi\Requests\OpenItemMarkAsPaidPostRequest;
@@ -275,6 +277,47 @@ function getShipment(): string
 
     $client = getClient();
     $request = (new ShipmentGetRequest)
+        ->setId($id);
+
+    return getResponseOutput($client, $client->sendRequest($request));
+}
+
+function getCustomers(): string
+{
+    $page = getPostValue('getCustomers-page');
+    $pageSize = getPostValue('getCustomers-pageSize');
+
+    $client = getClient();
+    $request = (new CustomersGetRequest)
+        ->setPage($page ?? 1)
+        ->setPageSize($pageSize ?? 100);
+
+    $i = 0;
+    do {
+        if (null === getPostValue('getCustomers-filter-' . $i . '-property')
+            || null === getPostValue('getCustomers-filter-' . $i . '-operator')
+        ) {
+            break;
+        }
+
+        $request->filter(
+            getPostValue('getCustomers-filter-' . $i . '-property'),
+            getPostValue('getCustomers-filter-' . $i . '-operator'),
+            getPostValue('getCustomers-filter-' . $i . '-query')
+        );
+
+        $i++;
+    } while (1);
+
+    return getResponseOutput($client, $client->sendRequest($request));
+}
+
+function getCustomer(): string
+{
+    $id = getPostValue('getCustomer-id');
+
+    $client = getClient();
+    $request = (new CustomerGetRequest())
         ->setId($id);
 
     return getResponseOutput($client, $client->sendRequest($request));
@@ -680,6 +723,99 @@ function getShipment(): string
                 <input type="submit" name="getShipment" value="Send request"><br />
             </div>
             <?php if ($result = handleRequest('getShipment')) { ?>
+                <div class="result">
+                    <h4>Result:</h4>
+                    <pre><?php echo $result; ?></pre>
+                </div>
+            <?php } ?>
+        </fieldset>
+        <fieldset>
+            <legend>GetCustomers</legend>
+            <div>
+                <table>
+                    <tr>
+                        <td style="width: 150px"><label for="getCustomers-page">Page</label></td>
+                        <td><input type="text" id="getCustomers-page" name="getCustomers-page" value="<?php echo getPostValue('getCustomers-page'); ?>" size="25"></td>
+                    </tr>
+                    <tr>
+                        <td><label for="getCustomers-pageSize">PageSize</label></td>
+                        <td><input type="text" id="getCustomers-pageSize" name="getCustomers-pageSize" value="<?php echo getPostValue('getCustomers-pageSize'); ?>" size="25"></td>
+                    </tr>
+                    <tr>
+                        <td><label for="filter">Filter</label></td>
+                        <td>
+                            <table>
+                                <?php for ($i = 0; $i < 5; $i++):?>
+                                    <tr>
+                                        <td>
+                                            <select name="getCustomers-filter-<?php echo $i; ?>-property">
+                                                <?php
+                                                foreach ([
+                                                    '' => '',
+                                                    'customerNumber' => 'customerNumber',
+                                                    'email' => 'email',
+                                                    'firstName' => 'firstName',
+                                                    'lastName' => 'lastName',
+                                                    'personCompany' => 'personCompany',
+                                                ] as $key => $value) {
+                                                    echo '<option value="' . $key . '"' . ($key == getPostValue('getCustomers-filter-' . $i . '-property') ? ' selected' : '') . '>' . $value . '</option>';
+                                                }
+                                                ?>
+                                            </select>
+                                        </td>
+                                        <td>
+                                            <select name="getCustomers-filter-<?php echo $i; ?>-operator">
+                                                <?php
+                                                foreach ([
+                                                    '' => '',
+                                                    'eq' => 'equal',
+                                                    'ne' => 'not equal',
+                                                    'lt' => 'less than',
+                                                    'gt' => 'greater than',
+                                                    'le' => 'less equal',
+                                                    'ge' => 'greater equal',
+                                                    'null' => 'is null',
+                                                    'notnull' => 'is not null',
+                                                    'like' => 'like',
+                                                    'notlike' => 'not like',
+                                                    'ilike' => 'like, ignoring case',
+                                                    'notilike' => 'not like, ignoring case',
+                                                    'in' => 'is in the specified list',
+                                                    'notin' => 'not in the specified list',
+                                                ] as $key => $value) {
+                                                    echo '<option value="' . $key . '"' . ($key == getPostValue('getCustomers-filter-' . $i . '-operator') ? ' selected' : '') . '>' . $value . '</option>';
+                                                }
+                                                ?>
+                                            </select>
+                                        </td>
+                                        <td><input type="text" name="getCustomers-filter-<?php echo $i; ?>-query" value="<?php echo getPostValue('getCustomers-filter-' . $i . '-query'); ?>"></td>
+                                    </tr>
+                                <?php endfor; ?>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+                <input type="submit" name="getCustomers" value="Send request"><br />
+            </div>
+            <?php if ($result = handleRequest('getCustomers')) { ?>
+                <div class="result">
+                    <h4>Result:</h4>
+                    <pre><?php echo $result; ?></pre>
+                </div>
+            <?php } ?>
+        </fieldset>
+        <fieldset>
+            <legend>GetCustomer</legend>
+            <div>
+                <table>
+                    <tr>
+                        <td style="width: 150px"><label for="getCustomer-id">Customer-ID</label></td>
+                        <td><input type="text" id="getCustomer-id" name="getCustomer-id" value="<?php echo getPostValue('getCustomer-id'); ?>" size="25"></td>
+                    </tr>
+                </table>
+                <input type="submit" name="getCustomer" value="Send request"><br />
+            </div>
+            <?php if ($result = handleRequest('getCustomer')) { ?>
                 <div class="result">
                     <h4>Result:</h4>
                     <pre><?php echo $result; ?></pre>

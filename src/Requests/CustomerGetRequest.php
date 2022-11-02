@@ -9,12 +9,9 @@
 
 namespace ShopModule\WeclappApi\Requests;
 
-use ShopModule\WeclappApi\Requests\GetRequest;
-
+use ShopModule\WeclappApi\Responses\CustomerResponse;
 use ShopModule\WeclappApi\Traits\Requests\HasResourceId;
 use ShopModule\WeclappApi\Traits\Requests\IsCustomerRequest;
-
-use ShopModule\WeclappApi\Responses\CustomerResponse;
 
 class CustomerGetRequest extends GetRequest
 {
