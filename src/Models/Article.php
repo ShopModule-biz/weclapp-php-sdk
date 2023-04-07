@@ -74,9 +74,9 @@ class Article extends Model
     }
     
     public function getCalculationPrice(
-        string|null $salesChannel = null,
-        int|null $validTimestamp = null
-    ): stdClass|null
+        ?string $salesChannel = null,
+        ?int $validTimestamp = null
+    ): ?stdClass
     {
         $validTimestamp = $validTimestamp ?? (time() . '000');
 
