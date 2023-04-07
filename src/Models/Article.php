@@ -8,6 +8,8 @@
 
 namespace ShopModule\WeclappApi\Models;
 
+use stdClass;
+
 class Article extends Model
 {
     /**
@@ -69,6 +71,32 @@ class Article extends Model
         }
 
         return $prices;
+    }
+    
+    public function getCalculationPrice(
+        string|null $salesChannel = null,
+        int|null $validTimestamp = null
+    ): stdClass|null
+    {
+        $validTimestamp = $validTimestamp ?? (time() . '000');
+
+        foreach ($this->articleCalculationPrices ?? [] as $price) {
+            /** @var stdClass $price */
+
+            // check sales channel
+            if (null !== $salesChannel && $price->salesChannel != $salesChannel) {
+                continue;
+            }
+
+            // check date
+            if (( ! property_exists($price, 'startDate') || $validTimestamp >= $price->startDate)
+                && ( ! property_exists($price, 'endDate') || $validTimestamp < $price->endDate)
+            ) {
+                return $price;
+            }
+        }
+
+        return null;
     }
 
 }
