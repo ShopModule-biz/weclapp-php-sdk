@@ -3,6 +3,8 @@
 require_once dirname(__FILE__) . '/vendor/autoload.php';
 
 use ShopModule\WeclappApi\Client;
+use ShopModule\WeclappApi\Requests\ArticleCategoriesGetRequest;
+use ShopModule\WeclappApi\Requests\ArticleCategoryGetRequest;
 use ShopModule\WeclappApi\Requests\ArticleExtraInfoForAppGetRequest;
 use ShopModule\WeclappApi\Requests\ArticleGetRequest;
 use ShopModule\WeclappApi\Requests\ArticlesGetRequest;
@@ -119,6 +121,30 @@ function getArticle(): string
 
     $client = getClient();
     $request = (new ArticleGetRequest)
+        ->setId($id);
+
+    return getResponseOutput($client, $client->sendRequest($request));
+}
+
+function getArticleCategories(): string
+{
+    $page = getPostValue('getArticleCategories-page');
+    $pageSize = getPostValue('getArticleCategories-pageSize');
+
+    $client = getClient();
+    $request = (new ArticleCategoriesGetRequest())
+        ->setPage($page ?? 1)
+        ->setPageSize($pageSize ?? 100);
+
+    return getResponseOutput($client, $client->sendRequest($request));
+}
+
+function getArticleCategory(): string
+{
+    $id = getPostValue('getArticleCategory-id');
+
+    $client = getClient();
+    $request = (new ArticleCategoryGetRequest())
         ->setId($id);
 
     return getResponseOutput($client, $client->sendRequest($request));
@@ -472,6 +498,46 @@ function getCustomer(): string
                 <input type="submit" name="getArticle" value="Send request"><br />
             </div>
             <?php if ($result = handleRequest('getArticle')) { ?>
+                <div class="result">
+                    <h4>Result:</h4>
+                    <pre><?php echo $result; ?></pre>
+                </div>
+            <?php } ?>
+        </fieldset>
+        <fieldset>
+            <legend>GetArticleCategories</legend>
+            <div>
+                <table>
+                    <tr>
+                        <td style="width: 150px"><label for="getArticleCategories-page">Page</label></td>
+                        <td><input type="text" id="getArticleCategories-page" name="getArticleCategories-page" value="<?php echo getPostValue('getArticleCategories-page'); ?>" size="25"></td>
+                    </tr>
+                    <tr>
+                        <td><label for="getArticleCategories-pageSize">PageSize</label></td>
+                        <td><input type="text" id="getArticleCategories-pageSize" name="getArticleCategories-pageSize" value="<?php echo getPostValue('getArticleCategories-pageSize'); ?>" size="25"></td>
+                    </tr>
+                </table>
+                <input type="submit" name="getArticleCategories" value="Send request"><br />
+            </div>
+            <?php if ($result = handleRequest('getArticleCategories')) { ?>
+                <div class="result">
+                    <h4>Result:</h4>
+                    <pre><?php echo $result; ?></pre>
+                </div>
+            <?php } ?>
+        </fieldset>
+        <fieldset>
+            <legend>GetArticleCategory</legend>
+            <div>
+                <table>
+                    <tr>
+                        <td style="width: 150px"><label for="getArticleCategory-id">ArticleCategory-ID</label></td>
+                        <td><input type="text" id="getArticleCategory-id" name="getArticleCategory-id" value="<?php echo getPostValue('getArticleCategory-id'); ?>" size="25"></td>
+                    </tr>
+                </table>
+                <input type="submit" name="getArticleCategory" value="Send request"><br />
+            </div>
+            <?php if ($result = handleRequest('getArticleCategory')) { ?>
                 <div class="result">
                     <h4>Result:</h4>
                     <pre><?php echo $result; ?></pre>
