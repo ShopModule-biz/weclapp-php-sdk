@@ -8,6 +8,7 @@
 
 namespace ShopModule\WeclappApi;
 
+use CurlHandle;
 use ShopModule\WeclappApi\Exceptions\MissingPropertyException;
 
 use ShopModule\WeclappApi\Requests\Request;
@@ -163,12 +164,15 @@ class Client
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $request->getMethod());
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_HTTPHEADER, $this->buildHttpHeader());
+        curl_setopt($ch, CURLOPT_HEADER, true);
         
         if ($request instanceof PostRequest || $request instanceof PutRequest) {
             curl_setopt($ch, CURLOPT_POSTFIELDS, $request->getJsonData());
         }
         
         $response = curl_exec($ch);
+        
+        $headerSize = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
 
         $this->setHttpStatus((int) curl_getinfo($ch, CURLINFO_RESPONSE_CODE));
 
@@ -178,21 +182,50 @@ class Client
         }
         curl_close($ch);
         
-        return $this->parseResponse($request, $response);
+        return $this->parseResponse($request, $response, $headerSize);
     }
 
-    /**
-     * Parses the response to a request and returns it as a new object.
-     *
-     * @param Request $request
-     * @param string $response
-     * @return Response
-     */
-    public function parseResponse(Request $request, string $response): Response
+    public function parseResponse(Request $request, string $response, int $headerSize): Response
     {
-        $responseClass = $request->getResponseClass();
+        $headers = $this->parseResponseHeaders(
+            substr($response, 0, $headerSize),
+        );
+
+        $response = $this->parseResponseBody(
+            substr($response, $headerSize),
+            $headers,
+        );
         
-        return new $responseClass($response);
+        $responseClass = $request->getResponseClass();
+        return new $responseClass($response, $headers);
     }
-    
+
+    public function parseResponseHeaders(string $header): array
+    {
+        $headers = [];
+        $lines = explode("\r\n", trim($header));
+
+        foreach ($lines as $line) {
+            if (str_contains($line, ': ')) {
+                list($key, $value) = explode(': ', $line, 2);
+                $headers[$key] = $value;
+            } else {
+                $headers['status'] = $line;
+            }
+        }
+        
+        return $headers;
+    }
+
+    public function parseResponseBody(string $body, array $headers): string
+    {
+        if (isset($headers[ContentEncoding::HEADER])
+            && ContentEncoding::GZIP === $headers[ContentEncoding::HEADER]
+        ) {
+            $body = gzdecode($body);
+        }
+        
+        return $body;
+    }
+
 }

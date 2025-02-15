@@ -14,12 +14,12 @@ class Response
 {
     protected stdClass|array $data;
 
-    /**
-     * @param string $data
-     */
-    public function __construct(string $data)
+    private array $headers;
+
+    public function __construct(string $data, array $headers)
     {
         $this->data = $this->parseData($data);
+        $this->headers = $headers;
     }
 
     protected function parseData(string $data): array|stdClass
@@ -27,9 +27,11 @@ class Response
         return json_decode($data);
     }
 
-    /**
-     * @return bool
-     */
+    public function getHeaders(): array
+    {
+        return $this->headers;
+    }
+    
     public function hasError(): bool
     {
         return is_object($this->data)
