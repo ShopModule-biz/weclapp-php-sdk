@@ -12,10 +12,7 @@ use stdClass;
 
 class Response
 {
-    /**
-     * @var array|stdClass
-     */
-    protected $data;
+    protected stdClass|array $data;
 
     /**
      * @param string $data
@@ -25,11 +22,7 @@ class Response
         $this->data = $this->parseData($data);
     }
 
-    /**
-     * @param string $data
-     * @return array|stdClass
-     */
-    protected function parseData(string $data)
+    protected function parseData(string $data): array|stdClass
     {
         return json_decode($data);
     }
@@ -43,10 +36,7 @@ class Response
             && property_exists($this->data, 'error');
     }
 
-    /**
-     * @return string|null
-     */
-    public function getError(): ?string
+    public function getError(): string|null
     {
         $data = $this->getData();
         if (is_object($data) && property_exists($data, 'error')) {
@@ -55,10 +45,7 @@ class Response
         return null;
     }
 
-    /**
-     * @return array|stdClass
-     */
-    public function getData()
+    public function getData(): array|stdClass
     {
         return $this->data;
     }

@@ -10,6 +10,7 @@ namespace ShopModule\WeclappApi\Responses;
 
 use ShopModule\WeclappApi\Exceptions\MissingDataException;
 use ShopModule\WeclappApi\Traits\Responses\HasModelBinding;
+use stdClass;
 
 abstract class ObjectResponse extends Response
 {
@@ -26,11 +27,7 @@ abstract class ObjectResponse extends Response
         }
     }
 
-    /**
-     * @param string $data
-     * @return mixed
-     */
-    protected function parseData(string $data)
+    protected function parseData(string $data): array|stdClass
     {
         return $this->bindModel(parent::parseData($data));
     }

@@ -15,11 +15,7 @@ abstract class SeveralResponse extends Response
 {
     use HasModelBinding;
 
-    /**
-     * @param string $data
-     * @return array|stdClass
-     */
-    protected function parseData(string $data)
+    protected function parseData(string $data): array|stdClass
     {
         $data = parent::parseData($data);
 
@@ -38,11 +34,7 @@ abstract class SeveralResponse extends Response
         return $parsed;
     }
 
-    /**
-     * @param stdClass $data
-     * @return mixed
-     */
-    protected function parseItem(stdClass $data)
+    protected function parseItem(stdClass $data): mixed
     {
         return $this->bindModel($data);
     }

@@ -25,56 +25,19 @@ class Client
      */
     const API_URL = 'https://<tenant>.weclapp.com/webapp/api/v1/';
 
-    /**
-     * Tenant for authentication.
-     *
-     * @var string
-     */
-    private $tenant;
+    private string $tenant;
+    private string $token;
+    private string|null $requestUrl = null;
+    private int|null $httpStatus = null;
+    private string|null $curlError = null;
+    private int|null $curlErrno = null;
 
-    /**
-     * Authentication token.
-     *
-     * @var string
-     */
-    private $token;
-
-    /**
-     * @var string|null
-     */
-    private $requestUrl = null;
-
-    /**
-     * @var int|null
-     */
-    private $httpStatus = null;
-
-    /**
-     * @var string|null
-     */
-    private $curlError = null;
-
-    /**
-     * @var integer|null
-     */
-    private $curlErrno = null;
-
-    /**
-     * @param string|null $tenant
-     * @param string|null $token
-     */
-    public function __construct(?string $tenant = null, ?string $token = null)
+    public function __construct(string|null $tenant = null, string|null $token = null)
     {
         null === $tenant || $this->setTenant($tenant);
         null === $token || $this->setToken($token);
     }
 
-    /**
-     * Sets the tenant for authentication.
-     *
-     * @param string $tenant
-     * @return $this
-     */
     public function setTenant(string $tenant): self
     {
         $this->tenant = $tenant;
@@ -82,9 +45,6 @@ class Client
     }
 
     /**
-     * Returns the tenant for authentication.
-     *
-     * @return string
      * @throws MissingPropertyException
      */
     private function getTenant(): string
@@ -96,12 +56,6 @@ class Client
         return $this->tenant;
     }
 
-    /**
-     * Sets the token for authentication.
-     *
-     * @param string $token
-     * @return $this
-     */
     public function setToken(string $token): self
     {
         $this->token = $token;
@@ -109,9 +63,6 @@ class Client
     }
 
     /**
-     * Returns the token used for authentication.
-     *
-     * @return string
      * @throws MissingPropertyException
      */
     private function getToken(): string
@@ -123,97 +74,50 @@ class Client
         return $this->token;
     }
 
-    /**
-     * Sets the URL of the last request and returns the current object.
-     *
-     * @param string|null $url
-     * @return $this
-     */
-    private function setRequestUrl(?string $url): self
+    private function setRequestUrl(string|null $url): self
     {
         $this->requestUrl = $url;
         return $this;
     }
 
-    /**
-     * Returns the URL of the last request.
-     *
-     * @return string|null
-     */
-    public function getRequestUrl(): ?string
+    public function getRequestUrl(): string|null
     {
         return $this->requestUrl;
     }
 
-    /**
-     * Sets the HTTP status of the last request and returns the current object.
-     *
-     * @param int|null $httpStatus
-     * @return self
-     */
-    private function setHttpStatus(?int $httpStatus): self
+    private function setHttpStatus(int|null $httpStatus): self
     {
         $this->httpStatus = $httpStatus;
         return $this;
     }
 
-    /**
-     * Returns the HTTP status of the last request.
-     *
-     * @return int|null
-     */
-    public function getHttpStatus(): ?int
+    public function getHttpStatus(): int|null
     {
         return $this->httpStatus;
     }
 
-    /**
-     * Sets the CURL error of the last request and returns the current object.
-     *
-     * @param string|null $curlError
-     * @return self
-     */
-    protected function setCurlError(?string $curlError): self
+    protected function setCurlError(string|null $curlError): self
     {
         $this->curlError = $curlError;
         return $this;
     }
 
-    /**
-     * Returns the CURL error of the last request.
-     *
-     * @return string|null
-     */
-    public function getCurlError(): ?string
+    public function getCurlError(): string|null
     {
         return $this->curlError;
     }
 
-    /**
-     * Sets the CURL error number of the last request and returns the current object.
-     *
-     * @param int|null $curlErrno
-     * @return self
-     */
-    protected function setCurlErrno(?int $curlErrno): self
+    protected function setCurlErrno(int|null $curlErrno): self
     {
         $this->curlErrno = $curlErrno;
         return $this;
     }
 
-    /**
-     * Returns the CURL error number of the last request.
-     *
-     * @return int|null
-     */
-    public function getCurlErrno(): ?int
+    public function getCurlErrno(): int|null
     {
         return $this->curlErrno;
     }
 
-    /**
-     * Resets the properties of the last request.
-     */
     protected function resetStatusProperties(): void
     {
         $this->setRequestUrl(null);
@@ -223,10 +127,6 @@ class Client
     }
 
     /**
-     * Generates the complete URL for a request and returns it.
-     *
-     * @param Request $request
-     * @return string
      * @throws MissingPropertyException
      */
     private function buildApiUrl(Request $request): string
@@ -236,8 +136,6 @@ class Client
     }
 
     /**
-     * Generates the HTTP headers for a request and returns it.
-     *
      * @return string[]
      * @throws MissingPropertyException
      */
@@ -250,10 +148,6 @@ class Client
     }
 
     /**
-     * Sends a request and returns the parsed response.
-     *
-     * @param Request $request
-     * @return Response
      * @throws MissingPropertyException
      */
     public function sendRequest(Request $request): Response
@@ -263,6 +157,7 @@ class Client
         $url = $this->buildApiUrl($request);
         $this->setRequestUrl($url);
 
+        /** @var CurlHandle $ch */
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $request->getMethod());
